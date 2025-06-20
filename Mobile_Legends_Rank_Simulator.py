@@ -42,7 +42,7 @@ simulation1_polynomial_fit_power = 16
 histogram_bin = 50 # Determines how many paitns in each bar bars of the final esimate histogram you want, only shows if expected_season_end_win_rate is in the simulation range
 
 # Simulation 2 Variables
-simulation2_number_of_attempts = 10
+simulation2_number_of_attempts = 1000
 
 # Game Variables
 star_raising_cap = 1000 # 1000 gets you extra star
