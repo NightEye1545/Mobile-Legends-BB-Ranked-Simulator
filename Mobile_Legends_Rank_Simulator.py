@@ -28,7 +28,24 @@ def Determine_Result (wr, stars, star_raising, star_raising_cap, max_star_raisin
 def rational_model (x, a, b, c):
     return a / (x - b) + c
 
-def simulation_1 ():
+def simulation_1 (
+        simulation1_number_of_attempts_per_win_rate,
+        histogram_bin,
+        simulation_path,
+        expected_season_end_win_rate,
+        starting_rank,
+        target_stars,
+        star_raising_cap,
+        max_star_raising_per_game,
+        max_star_protection_per_game,
+        star_protection_cap,
+        show_player_Legend,
+        show_player_Graph,
+        max_games_to_simulate,
+        min_win_rate,
+        max_win_rate,
+        how_many_different_winrates
+):
     print("Simulation 1: Series of Win Rates")
     # This simulation assumes you actually are able to play at the level that you are simulating.
 
@@ -157,7 +174,23 @@ def simulation_1 ():
     else:
         print(f"Apologies, but for the chosen range between {min_win_rate}% and {max_win_rate}%, none of the attempts have managed to reach {target_stars} stars within {max_games_to_simulate} games")
     
-def simulation_2 ():
+def simulation_2 (
+        simulation2_number_of_attempts,
+        simulation_path,
+        expected_season_end_win_rate,
+        starting_rank,
+        target_stars,
+        star_raising_cap,
+        max_star_raising_per_game,
+        max_star_protection_per_game,
+        star_protection_cap,
+        show_player_Legend,
+        show_player_Graph,
+        max_games_to_simulate,
+        min_win_rate,
+        max_win_rate,
+        how_many_different_winrates
+):
 
     print("Simulation 2: Single Win Rate Analysis")
 
@@ -280,7 +313,6 @@ target_stars = 100 # 0 stars means zero star in mythic, or 5 start in legend 1
 
 # Simulation 1 Variables
 simulation1_number_of_attempts_per_win_rate = 1000 # how many times does a player with a certain win rate need to play?
-simulation1_polynomial_fit_power = 16
 histogram_bin = 50 # Determines how many paitns in each bar bars of the final esimate histogram you want, only shows if expected_season_end_win_rate is in the simulation range
 
 # Simulation 2 Variables
@@ -307,8 +339,41 @@ match(simulation_path):
     ################### Simulation 1 ######################################################################################################################################################
 
     case 1: 
-        simulation_1 ()
+        simulation_1 (
+            simulation1_number_of_attempts_per_win_rate,
+            histogram_bin,
+            simulation_path,
+            expected_season_end_win_rate,
+            starting_rank,
+            target_stars,
+            star_raising_cap,
+            max_star_raising_per_game,
+            max_star_protection_per_game,
+            star_protection_cap,
+            show_player_Legend,
+            show_player_Graph,
+            max_games_to_simulate,
+            min_win_rate,
+            max_win_rate,
+            how_many_different_winrates
+        )
         
     case 2: 
-        simulation_2 ()
-        
+        simulation_2 (
+            simulation2_number_of_attempts,
+            simulation_path,
+            expected_season_end_win_rate,
+            starting_rank,
+            target_stars,
+            star_raising_cap,
+            max_star_raising_per_game,
+            max_star_protection_per_game,
+            star_protection_cap,
+            show_player_Legend,
+            show_player_Graph,
+            max_games_to_simulate,
+            min_win_rate,
+            max_win_rate,
+            how_many_different_winrates
+        )
+
