@@ -34,7 +34,7 @@ def rational_model(x, a, b, c):
 simulation_path = 2
 expected_season_end_win_rate = 55 # what win rate % to figure out how many games to reach the ceiling
 starting_rank = -29
-target_stars = -24 # 0 stars means zero star in mythic, or 5 start in legend 1
+target_stars = 100 # 0 stars means zero star in mythic, or 5 start in legend 1
 
 # Simulation 1 Variables
 simulation1_number_of_attempts_per_win_rate = 1000 # how many times does a player with a certain win rate need to play?
