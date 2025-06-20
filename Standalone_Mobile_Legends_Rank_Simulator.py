@@ -1,9 +1,9 @@
+######## Import Libraries ###################################################################################################################################################################
+
 import numpy as np
 import matplotlib.pyplot as plt
 import random as rnd
 from scipy.optimize import curve_fit
-
-## This is a test line for GIT, never used it properly before.
 
 ######## Functions ###################################################################################################################################################################
 
@@ -31,7 +31,6 @@ def rational_model (x, a, b, c):
 def simulation_1 (
         simulation1_number_of_attempts_per_win_rate,
         histogram_bin,
-        simulation_path,
         expected_season_end_win_rate,
         starting_rank,
         target_stars,
@@ -176,7 +175,6 @@ def simulation_1 (
     
 def simulation_2 (
         simulation2_number_of_attempts,
-        simulation_path,
         expected_season_end_win_rate,
         starting_rank,
         target_stars,
@@ -184,12 +182,10 @@ def simulation_2 (
         max_star_raising_per_game,
         max_star_protection_per_game,
         star_protection_cap,
-        show_player_Legend,
         show_player_Graph,
         max_games_to_simulate,
         min_win_rate,
         max_win_rate,
-        how_many_different_winrates
 ):
 
     print("Simulation 2: Single Win Rate Analysis")
@@ -302,7 +298,6 @@ def simulation_2 (
     else:
         print(f"Apologies, but for the chosen range between {min_win_rate}% and {max_win_rate}%, none of the attempts have managed to reach {target_stars} stars within {max_games_to_simulate} games")
 
-
 ############# Control Panel ##########################################################################################################################################################
 
 # Global Variables
@@ -316,7 +311,7 @@ simulation1_number_of_attempts_per_win_rate = 1000 # how many times does a playe
 histogram_bin = 50 # Determines how many paitns in each bar bars of the final esimate histogram you want, only shows if expected_season_end_win_rate is in the simulation range
 
 # Simulation 2 Variables
-simulation2_number_of_attempts = 1000
+simulation2_number_of_attempts = 100
 
 # Game Variables
 star_raising_cap = 1000 # 1000 gets you extra star
@@ -328,7 +323,7 @@ star_protection_cap = 1000 # 1000 saves you from losing star
 show_player_Legend = True
 show_player_Graph = True
 max_games_to_simulate = 10000
-min_win_rate = 0
+min_win_rate = 90
 max_win_rate = 100
 how_many_different_winrates = 50
 
@@ -336,13 +331,10 @@ how_many_different_winrates = 50
 
 match(simulation_path):
 
-    ################### Simulation 1 ######################################################################################################################################################
-
     case 1: 
         simulation_1 (
             simulation1_number_of_attempts_per_win_rate,
             histogram_bin,
-            simulation_path,
             expected_season_end_win_rate,
             starting_rank,
             target_stars,
@@ -361,7 +353,6 @@ match(simulation_path):
     case 2: 
         simulation_2 (
             simulation2_number_of_attempts,
-            simulation_path,
             expected_season_end_win_rate,
             starting_rank,
             target_stars,
@@ -369,11 +360,8 @@ match(simulation_path):
             max_star_raising_per_game,
             max_star_protection_per_game,
             star_protection_cap,
-            show_player_Legend,
             show_player_Graph,
             max_games_to_simulate,
             min_win_rate,
             max_win_rate,
-            how_many_different_winrates
         )
-
