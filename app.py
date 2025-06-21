@@ -1,6 +1,11 @@
 import streamlit as st
 from Web_Mobile_Legends_Rank_Simulator import simulation_1, simulation_2, rank_selector, determine_stars
 
+if "cache_cleared" not in st.session_state:
+    st.cache_data.clear()
+    st.cache_resource.clear()
+    st.session_state["cache_cleared"] = True
+
 def main():
 
     st.title("Mobile Legends Ranked Simulator")
