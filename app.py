@@ -17,7 +17,8 @@ def main():
 
     simulation_label = st.selectbox(
         "Choose Simulation Type",
-        options=["Simulate Range of Win Rates", "Simulate Single Win Rate"]
+        options=["Simulate Single Win Rate", "Simulate Range of Win Rates"],
+        index=0
     )
 
     # Rank Selection
@@ -45,7 +46,11 @@ def main():
     starting_rank = determine_stars(starting_major_rank, starting_division, starting_minor_rank)
     target_stars = determine_stars(target_major_rank, target_division, target_minor_rank)
 
-    st.write(f"Starting Rank: {starting_rank}, Target Rank: {target_stars}")
+    can_run_simulation = False
+    if starting_rank < target_stars: 
+        can_run_simulation = True
+    else: 
+        st.warning("Target Rank must be higher than Starting Rank")
 
     st.markdown("---")
 
@@ -127,61 +132,62 @@ def main():
             starting_param_b = st.number_input("Starting Parameter b", value=45.50)
             starting_param_c = st.number_input("Starting Parameter c", value=10.00)
 
-    if st.button("Run Simulation"):
+    if can_run_simulation == True:
+        if st.button("Run Simulation"):
 
-        st.markdown("---")
+            st.markdown("---")
 
-        match simulation_label:
+            match simulation_label:
 
-            case "Simulate Range of Win Rates":
+                case "Simulate Range of Win Rates":
 
-                simulation_1(
-                    simulation1_number_of_attempts_per_win_rate,
-                    starting_rank,
-                    target_stars,
-                    star_raising_cap,
-                    max_star_raising_per_game,
-                    max_star_protection_per_game,
-                    star_protection_cap,
-                    show_player_Legend,
-                    show_player_Graph,
-                    max_games_to_simulate,
-                    min_win_rate,
-                    max_win_rate,
-                    how_many_different_winrates,
-                    starting_param_a,
-                    starting_param_b,
-                    starting_param_c,
-                    graph_colour,
-                    figure_size_x,
-                    figure_size_y           
-                )
+                    simulation_1(
+                        simulation1_number_of_attempts_per_win_rate,
+                        starting_rank,
+                        target_stars,
+                        star_raising_cap,
+                        max_star_raising_per_game,
+                        max_star_protection_per_game,
+                        star_protection_cap,
+                        show_player_Legend,
+                        show_player_Graph,
+                        max_games_to_simulate,
+                        min_win_rate,
+                        max_win_rate,
+                        how_many_different_winrates,
+                        starting_param_a,
+                        starting_param_b,
+                        starting_param_c,
+                        graph_colour,
+                        figure_size_x,
+                        figure_size_y           
+                    )
 
-            case "Simulate Single Win Rate":
+                case "Simulate Single Win Rate":
 
-                simulation_2(
-                    simulation2_number_of_attempts,
-                    expected_season_end_win_rate,
-                    starting_rank,
-                    target_stars,
-                    star_raising_cap,
-                    max_star_raising_per_game,
-                    max_star_protection_per_game,
-                    star_protection_cap,
-                    show_player_Graph,
-                    max_games_to_simulate,
-                    histogram_bin,
-                    starting_param_a,
-                    starting_param_b,
-                    starting_param_c,
-                    graph_colour,
-                    figure_size_x,
-                    figure_size_y
-                )
+                    simulation_2(
+                        simulation2_number_of_attempts,
+                        expected_season_end_win_rate,
+                        starting_rank,
+                        target_stars,
+                        star_raising_cap,
+                        max_star_raising_per_game,
+                        max_star_protection_per_game,
+                        star_protection_cap,
+                        show_player_Graph,
+                        max_games_to_simulate,
+                        histogram_bin,
+                        starting_param_a,
+                        starting_param_b,
+                        starting_param_c,
+                        graph_colour,
+                        figure_size_x,
+                        figure_size_y
+                    )
 
-            case _:
+                case _:
 
-                st.write("Unknown simulation type selected.")
+                    st.write("Invalid Simulation, Check Simulation Selection and Ensure Target Rank is Higher than Starting Rank")
 
 if __name__ == "__main__":
     main()

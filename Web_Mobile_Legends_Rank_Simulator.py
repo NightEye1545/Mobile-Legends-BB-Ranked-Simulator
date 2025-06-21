@@ -21,26 +21,45 @@ rank_dict_starting_values = {
     "Mythical Immortal": 0
 }
 
-rank_division_starting_values = {
+rank_division_starting_values_above_master = {
+    "Mythic": 0,
     "I": 20,
     "II": 15,
     "III": 10,
     "IV": 5,
-    "V": 0,
-    "": 0
+    "V": 0
+}
+
+rank_division_starting_values_above_elite = {
+    "I": 12,
+    "II": 8,
+    "III": 4,
+    "IV": 0
+}
+
+rank_division_starting_values_above_warrior = {
+    "I": 8,
+    "II": 4,
+    "III": 0,
+}
+
+rank_division_starting_values_warrior = {
+    "I": 6,
+    "II": 3,
+    "III": 0,
 }
 
 rank_dict = {
-    "Warrior": [["I", "II", "III"], 0, 3],
-    "Elite": [["I", "II", "III"], 0, 4],
-    "Master": [["I", "II", "III", "IV"], 0, 4],
-    "Grandmaster": [["I", "II", "III", "IV", "V"], 0, 5],
-    "Epic": [["I", "II", "III", "IV", "V"], 0, 5],
-    "Legend": [["I", "II", "III", "IV", "V"], 0, 5],
-    "Mythic": [[""], 0, 24],
-    "Mythical Honor": [[""], 25, 49],
-    "Mythical Glory": [[""], 50, 99],
-    "Mythical Immortal": [[""], 100, 5000]
+    "Warrior": [["III", "II", "I"], 0, 3],
+    "Elite": [["III", "II", "I"], 0, 4],
+    "Master": [["IV", "III", "II", "I"], 0, 4],
+    "Grandmaster": [["V", "IV", "III", "II", "I"], 0, 5],
+    "Epic": [["V", "IV", "III", "II", "I"], 0, 5],
+    "Legend": [["V", "IV", "III", "II", "I"], 0, 5],
+    "Mythic": [["Mythic"], 0, 24],
+    "Mythical Honor": [["Mythic"], 25, 49],
+    "Mythical Glory": [["Mythic"], 50, 99],
+    "Mythical Immortal": [["Mythic"], 100, 5000]
 }
 
 ######## Functions ###################################################################################################################################################################
@@ -69,43 +88,58 @@ def rational_model (x, a, b, c):
 def rank_selector (major_rank, division, stars, column_number):
 
     major_rank = st.selectbox(
-        'Starting Rank',
+        'Rank',
         options = list(rank_dict.keys()),
         key=f"starting_major_rank_{column_number}"
     )
-
-    if (major_rank not in ["Mythic",
-                                    "Mythical Honor",
-                                    "Mythical Glory",
-                                    "Mythical Immortal"]):
         
-        division = st.radio(
-            'Starting Rank',
-            options = rank_dict.get(major_rank)[0],
-            key=f"starting_division_rank_{column_number}"
-        )
+    division = st.radio(
+        'Division',
+        options = rank_dict.get(major_rank)[0],
+        key=f"starting_division_rank_{column_number}",
+        horizontal=True
+    )
     
-    if major_rank != "Mythical Immortal":
-        stars = st.selectbox(
-            "Number of Stars",
-            options = range(rank_dict.get(major_rank)[1], rank_dict.get(major_rank)[2] + 1),
-            key=f"starting_minor_rank_{column_number}"
-        )
-    
-    else:
+    if major_rank in ["Mythical Immortal"]:
         stars = st.number_input(
-            "Starting Stars",
+            "Stars",
             value=100,
             min_value=100,    
             max_value=5000      
         )
-    
+        
+    elif major_rank in ["Mythic","Mythical Honor","Mythical Glory"]:
+        stars = st.slider(
+            "Stars",
+            min_value=rank_dict.get(major_rank)[1],
+            max_value=rank_dict.get(major_rank)[2],
+            key=f"starting_minor_rank_{column_number}"
+        )
+
+    else:
+        stars = st.radio(
+            "Stars",
+            options = range(rank_dict.get(major_rank)[1], rank_dict.get(major_rank)[2] + 1),
+            key=f"starting_minor_rank_{column_number}",
+            horizontal=True
+        )
+
     return major_rank, division, stars
 
 def determine_stars (rank, division, stars):
-    stars_from_rank = rank_dict_starting_values.get(rank)
-    stars_from_division = rank_division_starting_values.get(division)
-    
+    if rank in ["Warrior"]:
+        stars_from_rank = rank_dict_starting_values.get(rank)
+        stars_from_division = rank_division_starting_values_warrior.get(division)
+    elif rank in ["Elite"]:
+        stars_from_rank = rank_dict_starting_values.get(rank)
+        stars_from_division = rank_division_starting_values_above_warrior.get(division)
+    elif rank in ["Master"]:
+        stars_from_rank = rank_dict_starting_values.get(rank)
+        stars_from_division = rank_division_starting_values_above_elite.get(division)        
+    else:
+        stars_from_rank = rank_dict_starting_values.get(rank)
+        stars_from_division = rank_division_starting_values_above_master.get(division)
+        
     return stars_from_rank + stars_from_division + stars
 
 ###################################################################################################################################################################
@@ -400,15 +434,15 @@ def simulation_2 (
         # Histogram for expected win rate 
 
         ax3.hist(games_to_target, bins= 1 if len(games_to_target) < histogram_bin else histogram_bin)
-        ax3.set_xlabel(f'Games to {target_stars} stars')
+        ax3.set_xlabel(f'Number of games to {target_stars} stars')
         ax3.set_ylabel('Frequency')
-        ax3.set_title(f"You need {rational_model(expected_season_end_win_rate, *params)} games to reach {target_stars} stars with {expected_season_end_win_rate}% win rate starting from {starting_rank} stars")
+        ax3.set_title(f"You need a median of {rational_model(expected_season_end_win_rate, *params):.0f} games to reach {target_stars} stars with {expected_season_end_win_rate:.1f}% win rate starting from {starting_rank} stars")
         st.pyplot(simulation_2_games_histogram)
 
         ax4.hist(actual_win_rate_list, bins= 1 if len(actual_win_rate_list) < histogram_bin else histogram_bin)
         ax4.set_xlabel(f'Win Rate after reaching {target_stars} stars / %')
         ax4.set_ylabel('Frequency')
-        ax4.set_title(f"This is the distribution of win rate after you reach {target_stars} stars playing if you're a {expected_season_end_win_rate}% wr player")
+        ax4.set_title(f"This is the distribution of win rate after you reach {target_stars} stars playing as a {expected_season_end_win_rate:.1f}% wr player")
         st.pyplot(simulation_2_win_rate_histogram)
 
     else:
