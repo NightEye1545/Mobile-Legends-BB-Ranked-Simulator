@@ -8,17 +8,39 @@ from scipy.optimize import curve_fit
 
 ######## Reference Data ###################################################################################################################################################################
 
-rank_dict = {
-    "Warrior": (0,3),
-    "Elite": (0,4),
-    "Master": (0,4),
+rank_dict_starting_values = {
+    "Warrior": -112,
+    "Elite": -103,
+    "Master": -91,
     "Grandmaster": -75,
     "Epic": -50,
     "Legend": -25,
     "Mythic": 0,
-    "Mythical Honor": 25,
-    "Mythical Glory": 50,
-    "Mythical Immortal": 100
+    "Mythical Honor": 0,
+    "Mythical Glory": 0,
+    "Mythical Immortal": 0
+}
+
+rank_division_starting_values = {
+    "I": 20,
+    "II": 15,
+    "III": 10,
+    "IV": 5,
+    "V": 0,
+    "": 0
+}
+
+rank_dict = {
+    "Warrior": [["I", "II", "III"], 0, 3],
+    "Elite": [["I", "II", "III"], 0, 4],
+    "Master": [["I", "II", "III", "IV"], 0, 4],
+    "Grandmaster": [["I", "II", "III", "IV", "V"], 0, 5],
+    "Epic": [["I", "II", "III", "IV", "V"], 0, 5],
+    "Legend": [["I", "II", "III", "IV", "V"], 0, 5],
+    "Mythic": [[""], 0, 24],
+    "Mythical Honor": [[""], 25, 49],
+    "Mythical Glory": [[""], 50, 99],
+    "Mythical Immortal": [[""], 100, 5000]
 }
 
 ######## Functions ###################################################################################################################################################################
@@ -44,8 +66,48 @@ def Determine_Result (wr, stars, star_raising, star_raising_cap, max_star_raisin
 def rational_model (x, a, b, c):
     return a / (x - b) + c
 
-def determine_rank_stars(major, minor):
-    pass
+def rank_selector (major_rank, division, stars, column_number):
+
+    major_rank = st.selectbox(
+        'Starting Rank',
+        options = list(rank_dict.keys()),
+        key=f"starting_major_rank_{column_number}"
+    )
+
+    if (major_rank not in ["Mythic",
+                                    "Mythical Honor",
+                                    "Mythical Glory",
+                                    "Mythical Immortal"]):
+        
+        division = st.radio(
+            'Starting Rank',
+            options = rank_dict.get(major_rank)[0],
+            key=f"starting_division_rank_{column_number}"
+        )
+    
+    if major_rank != "Mythical Immortal":
+        stars = st.selectbox(
+            "Number of Stars",
+            options = range(rank_dict.get(major_rank)[1], rank_dict.get(major_rank)[2] + 1),
+            key=f"starting_minor_rank_{column_number}"
+        )
+    
+    else:
+        stars = st.number_input(
+            "Starting Stars",
+            value=100,
+            min_value=100,    
+            max_value=5000      
+        )
+    
+    return major_rank, division, stars
+
+def determine_stars (rank, division, stars):
+    stars_from_rank = rank_dict_starting_values.get(rank)
+    stars_from_division = rank_division_starting_values.get(division)
+    
+    return stars_from_rank + stars_from_division + stars
+
 ###################################################################################################################################################################
 
 def simulation_1 (
@@ -185,7 +247,7 @@ def simulation_1 (
         # Generate smooth curve
         x_fit = np.linspace(min(x_data), max(x_data), 500)
         y_fit = rational_model(x_fit, *params)
-        ax2.plot(x_fit, y_fit, color='green', label=f'Best Rational Fit: {params[0]}/(x-{params[1]})+{params[2]}')
+        ax2.plot(x_fit, y_fit, color='green', label=f'Best Rational Fit: {params[0]:.2f}/(x-{params[1]:.2f})+{params[2]:.2f}')
 
         ax2.set_title(f"Win Rate vs Number of Games Needed for {target_stars} stars")
         ax2.set_xlabel("Win Rate (%)")
@@ -326,7 +388,7 @@ def simulation_2 (
         # Generate smooth curve
         x_fit = np.linspace(min(x_data), max(x_data), 500)
         y_fit = rational_model(x_fit, *params)
-        ax2.plot(x_fit, y_fit, color='green', label=f'Best Rational Fit: {params[0]}/(x-{params[1]})+{params[2]}')
+        ax2.plot(x_fit, y_fit, color='green', label=f'Best Rational Fit: {params[0]:.2f}/(x-{params[1]:.2f})+{params[2]:.2f}')
 
         ax2.set_title(f"Win Rate vs Number of Games Needed for {target_stars} stars")
         ax2.set_xlabel("Win Rate (%)")

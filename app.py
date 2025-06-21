@@ -1,90 +1,51 @@
 import streamlit as st
-from Web_Mobile_Legends_Rank_Simulator import simulation_1, simulation_2
+from Web_Mobile_Legends_Rank_Simulator import simulation_1, simulation_2, rank_selector, determine_stars
 
 ##################
 # Reference Data #
 ##################
 
-rank_dict = {
-    "Warrior": (0,3),
-    "Elite": (0,4),
-    "Master": (0,4),
-    "Grandmaster": (0,5),
-    "Epic": (0,5),
-    "Legend": (0,5),
-    "Mythic": (0,24),
-    "Mythical Honor": (25,49),
-    "Mythical Glory": (50,99),
-    "Mythical Immortal": (100,1000)
-}
+
 
 def main():
 
     st.title("Mobile Legends Ranked Simulator")
-
     st.markdown("---")
-
     st.subheader("Adjust the parameters below, then click Run Simulation.")
 
-    # --- Simulation Path ---
+    # Simulation Path
+
     simulation_label = st.selectbox(
         "Choose Simulation Type",
         options=["Simulate Range of Win Rates", "Simulate Single Win Rate"]
     )
 
+    # Rank Selection
+
+    starting_major_rank = "Epic"
+    starting_division = "I"
+    starting_minor_rank = 1
+
+    target_major_rank = "Mythical Immortal"
+    target_division = ""
+    target_minor_rank = 100
+
     col1, col2 = st.columns(2)
 
     with col1:
-        starting_major_rank = st.selectbox(
-            'Starting Rank',
-            options = list(rank_dict.keys()),
-        )
-        
-        if starting_major_rank != "Mythical Immortal":
-            starting_minor_rank = st.selectbox(
-                "Number of Stars",
-                options = range(rank_dict.get(starting_major_rank)[0], rank_dict.get(starting_major_rank)[1] + 1)
-            )
-        
-        else:
-            starting_minor_rank = st.number_input(
-                "Starting Stars",
-                value=100,
-                min_value=100,    
-                max_value=5000      
-            )
+        column_number = 1
+        with st.expander("Starting Rank", expanded=True):
+            starting_major_rank, starting_division, starting_minor_rank = rank_selector(starting_major_rank, starting_division, starting_minor_rank, column_number)
 
     with col2:
-        target_major_rank = st.selectbox(
-            'Target Rank',
-            options = list(rank_dict.keys()),
-        )
-        
-        if target_major_rank != "Mythical Immortal":
-            target_minor_rank = st.selectbox(
-                "Number of Stars",
-                options = range(rank_dict.get(target_major_rank)[0], rank_dict.get(target_major_rank)[1] + 1)
-            )
-        
-        else:
-            target_minor_rank = st.number_input(
-                "Starting Stars",
-                value=100,
-                min_value=100,    
-                max_value=5000      
-            )
-    
-    starting_rank = 0
-    target_stars = 0
+        column_number = 2
+        with st.expander("Target Rank", expanded=True):
+            target_major_rank, target_division, target_minor_rank = rank_selector(target_major_rank, target_division, target_minor_rank, column_number)
 
-    col1, col2= st.columns(2)
-    
-    with col1:
-        with st.container():
-            starting_rank = st.number_input("Starting Stars", value=-29)
-    with col2:
-        with st.container():
-            target_stars = st.number_input("Target Stars", value=100) 
+    starting_rank = determine_stars(starting_major_rank, starting_division, starting_minor_rank)
+    target_stars = determine_stars(target_major_rank, target_division, target_minor_rank)
+
+    st.write(f"Starting Rank: {starting_rank}, Target Rank: {target_stars}")
 
     st.markdown("---")
 
@@ -133,7 +94,7 @@ def main():
             show_player_Graph = st.checkbox("Show Player Graph", value=True)
 
             graph_colour = st.radio(
-                'Select the Graph Theme Colour',
+                'Graph Theme Colour',
                 options = ["white","black"]
             )
 
@@ -160,6 +121,8 @@ def main():
             max_star_raising_per_game = st.number_input("Max Star Raising per Game", value=200)
             max_star_protection_per_game = st.number_input("Max Star Protection per Game", value=200)
             star_protection_cap = st.number_input("Star Protection Cap", value=1000)
+            st.markdown("These are the fitting parameters for")
+            st.latex(r"\frac{a}{x - b} + c")
             starting_param_a = st.number_input("Starting Parameter a", value=4000.00)
             starting_param_b = st.number_input("Starting Parameter b", value=45.50)
             starting_param_c = st.number_input("Starting Parameter c", value=10.00)
