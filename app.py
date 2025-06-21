@@ -1,12 +1,6 @@
 import streamlit as st
 from Web_Mobile_Legends_Rank_Simulator import simulation_1, simulation_2, rank_selector, determine_stars
 
-##################
-# Reference Data #
-##################
-
-
-
 def main():
 
     st.title("Mobile Legends Ranked Simulator")
