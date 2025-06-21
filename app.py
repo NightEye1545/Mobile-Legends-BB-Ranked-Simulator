@@ -76,7 +76,12 @@ def main():
                 format="%.1f"
             )   
                 
-            simulation2_number_of_attempts = st.number_input("Number of Runs", value=100)
+            simulation2_number_of_attempts = st.number_input(
+                "Number of Runs",
+                value=100,
+                min_value=1,
+                max_value=25000
+            )
 
     st.markdown("---")
 
