@@ -1,15 +1,28 @@
 import streamlit as st
 from Web_Mobile_Legends_Rank_Simulator import simulation_1, simulation_2, rank_selector, determine_stars
+from user_guide import user_guide
+
+######## Cache clearing ###################################################################################################################
 
 if "cache_cleared" not in st.session_state:
     st.cache_data.clear()
     st.cache_resource.clear()
     st.session_state["cache_cleared"] = True
 
+######## Main Application ###################################################################################################################
+
 def main():
 
+######## Title settings ###################################################################################################################
+
     st.title("Mobile Legends Ranked Simulator")
+
     st.markdown("---")
+
+    st.subheader("👈 Need help? Expand the sidebar for a quick guide.")
+
+    st.markdown("---")
+
     st.subheader("Adjust the parameters below, then click Run Simulation.")
 
     # Simulation Path
@@ -20,7 +33,7 @@ def main():
         index=0
     )
 
-    # Rank Selection
+######## Rank selection  ###################################################################################################################
 
     starting_major_rank = "Epic"
     starting_division = "I"
@@ -52,6 +65,8 @@ def main():
         st.warning("Target Rank must be higher than Starting Rank")
 
     st.markdown("---")
+
+######## Simulation variables ###################################################################################################################
 
     match simulation_label:
 
@@ -90,58 +105,66 @@ def main():
 
     st.markdown("---")
 
-    # Sidebar for Additional Settings
+######## Sidebar settings ###################################################################################################################
+
     with st.sidebar:
 
-        st.header("Additional Simulation Controls")
+        user_guide()
 
-        max_games_to_simulate = st.number_input("Max Games to Simulate per Run", value=2500)
+        with st.expander("⚙️ Additional Simulation Controls", expanded = False):
 
-        with st.expander("Graph Settings", expanded = False):
+            max_games_to_simulate = st.number_input("Max Games to Simulate per Run", value=2500)
+
+            with st.expander("📈 Graph Settings", expanded = False):
+                
+                show_player_Legend = st.checkbox("Show Legend on Graph", value=True)
+                show_player_Graph = st.checkbox("Show Player Graph", value=True)
+
+                graph_colour = st.radio(
+                    'Graph Theme Colour',
+                    options = ["white","black"]
+                )
+
+                figure_size_x = st.slider(
+                    "Horizontal Figure Size",
+                    min_value=1,
+                    max_value=25,
+                    value=15,
+                    step=1,
+                )    
+
+                figure_size_y = st.slider(
+                    "Vertical Figure Size",
+                    min_value=1,
+                    max_value=25,
+                    value=10,
+                    step=1,
+                )    
+
+                histogram_bin = st.number_input("Histogram Bin Count", value=30)
             
-            show_player_Legend = st.checkbox("Show Legend on Graph", value=True)
-            show_player_Graph = st.checkbox("Show Player Graph", value=True)
+            with st.expander("🧪 Advanced Game Settings", expanded = False):
+                star_raising_cap = st.number_input("Star Raising Cap", value=1000)
+                max_star_raising_per_game = st.number_input("Max Star Raising per Game", value=200)
+                max_star_protection_per_game = st.number_input("Max Star Protection per Game", value=200)
+                star_protection_cap = st.number_input("Star Protection Cap", value=1000)
+                st.markdown("These are the fitting parameters for")
+                st.latex(r"\frac{a}{x - b} + c")
+                starting_param_a = st.number_input("Starting Parameter a", value=4000.00)
+                starting_param_b = st.number_input("Starting Parameter b", value=45.50)
+                starting_param_c = st.number_input("Starting Parameter c", value=10.00)
 
-            graph_colour = st.radio(
-                'Graph Theme Colour',
-                options = ["white","black"]
-            )
-
-            figure_size_x = st.slider(
-                "Horizontal Figure Size",
-                min_value=1,
-                max_value=25,
-                value=15,
-                step=1,
-            )    
-
-            figure_size_y = st.slider(
-                "Vertical Figure Size",
-                min_value=1,
-                max_value=25,
-                value=10,
-                step=1,
-            )    
-
-            histogram_bin = st.number_input("Histogram Bin Count", value=30)
-        
-        with st.expander("Advanced Game Settings", expanded = False):
-            star_raising_cap = st.number_input("Star Raising Cap", value=1000)
-            max_star_raising_per_game = st.number_input("Max Star Raising per Game", value=200)
-            max_star_protection_per_game = st.number_input("Max Star Protection per Game", value=200)
-            star_protection_cap = st.number_input("Star Protection Cap", value=1000)
-            st.markdown("These are the fitting parameters for")
-            st.latex(r"\frac{a}{x - b} + c")
-            starting_param_a = st.number_input("Starting Parameter a", value=4000.00)
-            starting_param_b = st.number_input("Starting Parameter b", value=45.50)
-            starting_param_c = st.number_input("Starting Parameter c", value=10.00)
+######## Simulation settings ###################################################################################################################
 
     if can_run_simulation == True:
+
         if st.button("Run Simulation"):
 
             st.markdown("---")
 
             match simulation_label:
+
+                ######## Simulation: Range of Win Rates ###################################################################################################################
 
                 case "Simulate Range of Win Rates":
 
@@ -175,6 +198,8 @@ def main():
 
                     st.pyplot(range_wr_player_run_graph)
                     st.pyplot(range_wr_game_distribution_graph)
+
+                ######## Simulation: Single Win Rate ###################################################################################################################
 
                 case "Simulate Single Win Rate":
                     
@@ -217,11 +242,14 @@ def main():
                             f"**{starting_major_rank} {starting_division} {starting_minor_rank}** stars."
                         )
 
-                        st.pyplot(single_wr_player_run_graph)
-                        st.pyplot(single_wr_game_distribution_graph)
-                        st.pyplot(single_wr_games_histogram)
-                        st.pyplot(single_wr_winrate_histogram) 
+                        with st.spinner("Generating Graphs..."):
+                            st.pyplot(single_wr_player_run_graph)
+                            st.pyplot(single_wr_game_distribution_graph)
+                            st.pyplot(single_wr_games_histogram)
+                            st.pyplot(single_wr_winrate_histogram) 
                 
+                ######## Simulation not found ###################################################################################################################
+
                 case _:
 
                     st.write("Invalid Simulation, Check Simulation Selection and Ensure Target Rank is Higher than Starting Rank")

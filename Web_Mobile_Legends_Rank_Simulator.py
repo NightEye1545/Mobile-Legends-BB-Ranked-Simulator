@@ -290,6 +290,7 @@ def simulation_1 (
         st.write(f"Apologies, but for the chosen range between {min_win_rate}% and {max_win_rate}%, none of the attempts have managed to reach {target_stars} stars within {max_games_to_simulate} games")
 
     return simulation_1_player_runs_graph, simulation_1_game_distribution_graph
+
 ###################################################################################################################################################################
 
 def simulation_2 (
