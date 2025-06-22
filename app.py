@@ -145,50 +145,83 @@ def main():
 
                 case "Simulate Range of Win Rates":
 
-                    simulation_1(
-                        simulation1_number_of_attempts_per_win_rate,
-                        starting_rank,
-                        target_stars,
-                        star_raising_cap,
-                        max_star_raising_per_game,
-                        max_star_protection_per_game,
-                        star_protection_cap,
-                        show_player_Legend,
-                        show_player_Graph,
-                        max_games_to_simulate,
-                        min_win_rate,
-                        max_win_rate,
-                        how_many_different_winrates,
-                        starting_param_a,
-                        starting_param_b,
-                        starting_param_c,
-                        graph_colour,
-                        figure_size_x,
-                        figure_size_y           
-                    )
+                    st.write("Simulation 1: Series of Win Rates")
+                    
+                    with st.spinner("Running simulation..."):
+
+                        range_wr_player_run_graph, range_wr_game_distribution_graph = simulation_1(
+                            simulation1_number_of_attempts_per_win_rate,
+                            starting_rank,
+                            target_stars,
+                            star_raising_cap,
+                            max_star_raising_per_game,
+                            max_star_protection_per_game,
+                            star_protection_cap,
+                            show_player_Legend,
+                            show_player_Graph,
+                            max_games_to_simulate,
+                            min_win_rate,
+                            max_win_rate,
+                            how_many_different_winrates,
+                            starting_param_a,
+                            starting_param_b,
+                            starting_param_c,
+                            graph_colour,
+                            figure_size_x,
+                            figure_size_y           
+                        )
+
+                    st.success("Simulation complete!")
+
+                    st.pyplot(range_wr_player_run_graph)
+                    st.pyplot(range_wr_game_distribution_graph)
 
                 case "Simulate Single Win Rate":
+                    
+                    st.write("Simulation 2: Single Win Rate Analysis")
 
-                    simulation_2(
-                        simulation2_number_of_attempts,
-                        expected_season_end_win_rate,
-                        starting_rank,
-                        target_stars,
-                        star_raising_cap,
-                        max_star_raising_per_game,
-                        max_star_protection_per_game,
-                        star_protection_cap,
-                        show_player_Graph,
-                        max_games_to_simulate,
-                        histogram_bin,
-                        starting_param_a,
-                        starting_param_b,
-                        starting_param_c,
-                        graph_colour,
-                        figure_size_x,
-                        figure_size_y
-                    )
+                    with st.spinner("Running Simulation..."):
+                        single_wr_player_run_graph, single_wr_game_distribution_graph, single_wr_games_histogram, single_wr_winrate_histogram, average_games_to_target = simulation_2(
+                            simulation2_number_of_attempts,
+                            expected_season_end_win_rate,
+                            starting_rank,
+                            target_stars,
+                            star_raising_cap,
+                            max_star_raising_per_game,
+                            max_star_protection_per_game,
+                            star_protection_cap,
+                            show_player_Graph,
+                            max_games_to_simulate,
+                            histogram_bin,
+                            starting_param_a,
+                            starting_param_b,
+                            starting_param_c,
+                            graph_colour,
+                            figure_size_x,
+                            figure_size_y
+                        )
 
+                    st.success("Simulation complete!")
+                    
+                    if average_games_to_target > max_games_to_simulate:
+                        st.markdown(
+                            f"Apologies, no simulated runs managed to reach "
+                            f"**{target_major_rank} {target_division} {target_minor_rank}** stars from "
+                            f"**{starting_major_rank} {starting_division} {starting_minor_rank}** stars within "
+                            f"**{max_games_to_simulate}** games."
+                        )
+                    else:
+                        st.markdown(
+                            f"You need an average of **{average_games_to_target:.0f}** games to reach "
+                            f"**{target_major_rank} {target_division} {target_minor_rank}** stars from "
+                            f"**{starting_major_rank} {starting_division} {starting_minor_rank}** stars."
+                        )
+
+                        st.pyplot(single_wr_player_run_graph)
+                        st.pyplot(single_wr_game_distribution_graph)
+                        st.pyplot(single_wr_games_histogram)
+                        st.pyplot(single_wr_winrate_histogram) 
+                
                 case _:
 
                     st.write("Invalid Simulation, Check Simulation Selection and Ensure Target Rank is Higher than Starting Rank")

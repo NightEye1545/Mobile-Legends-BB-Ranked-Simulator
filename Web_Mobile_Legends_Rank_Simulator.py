@@ -173,7 +173,6 @@ def simulation_1 (
     plt.rcParams['figure.facecolor'] = 'none'   # Transparent figure background
     plt.rcParams['axes.facecolor'] = 'none'     # Transparent axes background
 
-    st.write("Simulation 1: Series of Win Rates")
     # This simulation assumes you actually are able to play at the level that you are simulating.
 
     win_rate_list = [] # list of win rates, x values of the final plot
@@ -186,9 +185,9 @@ def simulation_1 (
     simulation_1_player_runs_graph.patch.set_alpha(0.0)
     ax1 = simulation_1_player_runs_graph.add_subplot(111)
 
-    ax4simulation_1_game_distribution_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
-    ax4simulation_1_game_distribution_graph.patch.set_alpha(0.0)
-    ax2 = ax4simulation_1_game_distribution_graph.add_subplot(111)
+    simulation_1_game_distribution_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
+    simulation_1_game_distribution_graph.patch.set_alpha(0.0)
+    ax2 = simulation_1_game_distribution_graph.add_subplot(111)
 
     for winrate in win_rate:
 
@@ -263,8 +262,6 @@ def simulation_1 (
         ax1.set_ylabel("Number of stars")
         if (show_player_Legend == True): ax1.legend()
 
-        st.pyplot(simulation_1_player_runs_graph)
-
     if(len(games_to_target) != 0):
 
         # Chat GPT Generated 
@@ -288,11 +285,11 @@ def simulation_1 (
         ax2.set_ylabel("Number of games")
         ax2.grid(True)
         ax2.legend()
-        st.pyplot(ax4simulation_1_game_distribution_graph )
 
     else:
         st.write(f"Apologies, but for the chosen range between {min_win_rate}% and {max_win_rate}%, none of the attempts have managed to reach {target_stars} stars within {max_games_to_simulate} games")
 
+    return simulation_1_player_runs_graph, simulation_1_game_distribution_graph
 ###################################################################################################################################################################
 
 def simulation_2 (
@@ -337,8 +334,6 @@ def simulation_2 (
     simulation_2_win_rate_histogram = plt.figure(figsize=(figure_size_x, figure_size_y))
     simulation_2_win_rate_histogram.patch.set_alpha(0.0)
     ax4 = simulation_2_win_rate_histogram.add_subplot(111)
-
-    st.write("Simulation 2: Single Win Rate Analysis")
 
     # This simulation assumes you actually are able to play at the level that you are simulating.
 
@@ -404,8 +399,8 @@ def simulation_2 (
         ax1.axhline(target_stars, color='r', label=f'{target_stars} stars threshold')
         ax1.set_xlabel("Number of games")
         ax1.set_ylabel("Number of stars")   
-        st.pyplot(simulation_2_player_runs_graph)
 
+    average_games_to_target = 100000000
 
     if(len(games_to_target) != 0):
 
@@ -418,6 +413,7 @@ def simulation_2 (
 
         # Fit the model
         params, _ = curve_fit(rational_model, x_data, y_data, p0=[starting_param_a, starting_param_b, starting_param_c], maxfev=10000)  # p0 is the initial guess
+        average_games_to_target = rational_model(expected_season_end_win_rate, *params)
 
         # Generate smooth curve
         x_fit = np.linspace(min(x_data), max(x_data), 500)
@@ -429,23 +425,19 @@ def simulation_2 (
         ax2.set_ylabel("Number of games")
         ax2.grid(True)
         ax2.legend()
-        st.pyplot(simulation_2_game_distribution_graph)
 
         # Histogram for expected win rate 
 
         ax3.hist(games_to_target, bins= 1 if len(games_to_target) < histogram_bin else histogram_bin)
         ax3.set_xlabel(f'Number of games to {target_stars} stars')
         ax3.set_ylabel('Frequency')
-        ax3.set_title(f"You need a median of {rational_model(expected_season_end_win_rate, *params):.0f} games to reach {target_stars} stars with {expected_season_end_win_rate:.1f}% win rate starting from {starting_rank} stars")
-        st.pyplot(simulation_2_games_histogram)
+        ax3.set_title(f"You need an average of {average_games_to_target:.0f} games to reach {target_stars} stars with {expected_season_end_win_rate:.1f}% win rate starting from {starting_rank} stars")
 
         ax4.hist(actual_win_rate_list, bins= 1 if len(actual_win_rate_list) < histogram_bin else histogram_bin)
         ax4.set_xlabel(f'Win Rate after reaching {target_stars} stars / %')
         ax4.set_ylabel('Frequency')
         ax4.set_title(f"This is the distribution of win rate after you reach {target_stars} stars playing as a {expected_season_end_win_rate:.1f}% wr player")
-        st.pyplot(simulation_2_win_rate_histogram)
 
-    else:
-        st.write(f"Apologies, but for the chosen {expected_season_end_win_rate}% expected win rate, none of the attempts have managed to reach {target_stars} stars within {max_games_to_simulate} games")
+    return simulation_2_player_runs_graph, simulation_2_game_distribution_graph, simulation_2_games_histogram, simulation_2_win_rate_histogram, average_games_to_target
 
 ###################################################################################################################################################################
