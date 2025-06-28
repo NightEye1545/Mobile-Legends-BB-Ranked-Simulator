@@ -200,13 +200,13 @@ def simulation_series_of_win_rates (
 
     win_rate = np.linspace(min_win_rate,max_win_rate, how_many_different_winrates)
 
-    simulation_1_player_runs_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
-    simulation_1_player_runs_graph.patch.set_alpha(0.0)
-    ax1 = simulation_1_player_runs_graph.add_subplot(111)
+    range_wr_player_run_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
+    range_wr_player_run_graph.patch.set_alpha(0.0)
+    ax1 = range_wr_player_run_graph.add_subplot(111)
 
-    simulation_1_game_distribution_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
-    simulation_1_game_distribution_graph.patch.set_alpha(0.0)
-    ax2 = simulation_1_game_distribution_graph.add_subplot(111)
+    range_wr_game_distribution_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
+    range_wr_game_distribution_graph.patch.set_alpha(0.0)
+    ax2 = range_wr_game_distribution_graph.add_subplot(111)
 
     for winrate in win_rate:
 
@@ -298,7 +298,7 @@ def simulation_series_of_win_rates (
     else:
         st.write(f"Apologies, but for the chosen range between {min_win_rate}% and {max_win_rate}%, none of the attempts have managed to reach {target_stars} stars within {max_games_to_simulate} games")
 
-    return simulation_1_player_runs_graph, simulation_1_game_distribution_graph
+    return range_wr_player_run_graph, range_wr_game_distribution_graph
 
 ###################################################################################################################################################################
 
@@ -324,21 +324,21 @@ def simulation_single_win_rate_analysis (
     
     graph_theme(graph_colour)
 
-    simulation_2_player_runs_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
-    simulation_2_player_runs_graph.patch.set_alpha(0.0)
-    ax1 = simulation_2_player_runs_graph.add_subplot(111)
+    single_wr_player_run_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
+    single_wr_player_run_graph.patch.set_alpha(0.0)
+    ax1 = single_wr_player_run_graph.add_subplot(111)
 
-    simulation_2_game_distribution_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
-    simulation_2_game_distribution_graph.patch.set_alpha(0.0)
-    ax2 = simulation_2_game_distribution_graph.add_subplot(111)
+    single_wr_game_distribution_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
+    single_wr_game_distribution_graph.patch.set_alpha(0.0)
+    ax2 = single_wr_game_distribution_graph.add_subplot(111)
 
-    simulation_2_games_histogram = plt.figure(figsize=(figure_size_x, figure_size_y))
-    simulation_2_games_histogram.patch.set_alpha(0.0)
-    ax3 = simulation_2_games_histogram.add_subplot(111)
+    single_wr_games_histogram = plt.figure(figsize=(figure_size_x, figure_size_y))
+    single_wr_games_histogram.patch.set_alpha(0.0)
+    ax3 = single_wr_games_histogram.add_subplot(111)
 
-    simulation_2_win_rate_histogram = plt.figure(figsize=(figure_size_x, figure_size_y))
-    simulation_2_win_rate_histogram.patch.set_alpha(0.0)
-    ax4 = simulation_2_win_rate_histogram.add_subplot(111)
+    single_wr_winrate_histogram = plt.figure(figsize=(figure_size_x, figure_size_y))
+    single_wr_winrate_histogram.patch.set_alpha(0.0)
+    ax4 = single_wr_winrate_histogram.add_subplot(111)
 
     # This simulation assumes you actually are able to play at the level that you are simulating.
 
@@ -433,11 +433,11 @@ def simulation_single_win_rate_analysis (
         ax4.set_ylabel('Frequency')
         ax4.set_title(f"This is the distribution of win rate after you reach {target_stars} stars playing as a {expected_season_end_win_rate:.1f}% wr player")
 
-    return simulation_2_player_runs_graph, simulation_2_game_distribution_graph, simulation_2_games_histogram, simulation_2_win_rate_histogram, average_games_to_target
+    return single_wr_player_run_graph, single_wr_game_distribution_graph, single_wr_games_histogram, single_wr_winrate_histogram, average_games_to_target
 
 ###################################################################################################################################################################
 
-def simulation_3 (
+def simulation_destination_from_number_of_games (
         simulation2_number_of_attempts,
         expected_season_end_win_rate,
         starting_rank,
@@ -459,21 +459,21 @@ def simulation_3 (
     
     graph_theme(graph_colour)
 
-    simulation_2_player_runs_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
-    simulation_2_player_runs_graph.patch.set_alpha(0.0)
-    ax1 = simulation_2_player_runs_graph.add_subplot(111)
+    single_wr_player_run_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
+    single_wr_player_run_graph.patch.set_alpha(0.0)
+    ax1 = single_wr_player_run_graph.add_subplot(111)
 
-    simulation_2_game_distribution_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
-    simulation_2_game_distribution_graph.patch.set_alpha(0.0)
-    ax2 = simulation_2_game_distribution_graph.add_subplot(111)
+    single_wr_game_distribution_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
+    single_wr_game_distribution_graph.patch.set_alpha(0.0)
+    ax2 = single_wr_game_distribution_graph.add_subplot(111)
 
-    simulation_2_games_histogram = plt.figure(figsize=(figure_size_x, figure_size_y))
-    simulation_2_games_histogram.patch.set_alpha(0.0)
-    ax3 = simulation_2_games_histogram.add_subplot(111)
+    single_wr_games_histogram = plt.figure(figsize=(figure_size_x, figure_size_y))
+    single_wr_games_histogram.patch.set_alpha(0.0)
+    ax3 = single_wr_games_histogram.add_subplot(111)
 
-    simulation_2_win_rate_histogram = plt.figure(figsize=(figure_size_x, figure_size_y))
-    simulation_2_win_rate_histogram.patch.set_alpha(0.0)
-    ax4 = simulation_2_win_rate_histogram.add_subplot(111)
+    single_wr_winrate_histogram = plt.figure(figsize=(figure_size_x, figure_size_y))
+    single_wr_winrate_histogram.patch.set_alpha(0.0)
+    ax4 = single_wr_winrate_histogram.add_subplot(111)
 
     # This simulation assumes you actually are able to play at the level that you are simulating.
 
@@ -568,4 +568,4 @@ def simulation_3 (
         ax4.set_ylabel('Frequency')
         ax4.set_title(f"This is the distribution of win rate after you reach {target_stars} stars playing as a {expected_season_end_win_rate:.1f}% wr player")
 
-    return simulation_2_player_runs_graph, simulation_2_game_distribution_graph, simulation_2_games_histogram, simulation_2_win_rate_histogram, average_games_to_target
+    return single_wr_player_run_graph, single_wr_game_distribution_graph, single_wr_games_histogram, single_wr_winrate_histogram, average_games_to_target

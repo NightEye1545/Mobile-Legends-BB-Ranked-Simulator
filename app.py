@@ -205,10 +205,8 @@ def main():
                     
                     if average_games_to_target > max_games_to_simulate:
                         st.markdown(
-                            f"Apologies, no simulated runs managed to reach "
-                            f"**{target_major_rank} {target_division} {target_minor_rank}** stars from "
-                            f"**{starting_major_rank} {starting_division} {starting_minor_rank}** stars within "
-                            f"**{max_games_to_simulate}** games."
+                            f"Please increase the number of Max Games to Simulate per Run (on the side bar) to see a significant proportion of the captured runs."
+                            f"\n(Hint: Try **{average_games_to_target + average_games_to_target/25:.0f}** games or higher)"
                         )
                     else:
                         st.markdown(
