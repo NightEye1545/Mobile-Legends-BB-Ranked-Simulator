@@ -1,5 +1,5 @@
 import streamlit as st
-from Web_Mobile_Legends_Rank_Simulator import simulation_1, simulation_2, rank_selector, determine_stars
+from Web_Mobile_Legends_Rank_Simulator import simulation_series_of_win_rates, simulation_single_win_rate_analysis, rank_selector, determine_stars
 
 if "cache_cleared" not in st.session_state:
     st.cache_data.clear()
@@ -66,9 +66,9 @@ def main():
 
             col1, col2 = st.columns(2)
             with col1:
-                simulation1_number_of_attempts_per_win_rate = st.number_input("Number of Attempts per Win Rate", value=1000)
+                simulation1_number_of_attempts_per_win_rate = st.number_input("Number of Attempts per Win Rate", value=1000, min_value=10)
             with col2:
-                how_many_different_winrates = st.number_input("Number of Win Rate to Simulate", value=50)
+                how_many_different_winrates = st.number_input("Number of Win Rate to Simulate", value=50, min_value=10)
 
         case "Simulate Single Win Rate":
 
@@ -84,7 +84,7 @@ def main():
             simulation2_number_of_attempts = st.number_input(
                 "Number of Runs",
                 value=100,
-                min_value=1,
+                min_value=10,
                 max_value=25000
             )
 
@@ -149,7 +149,7 @@ def main():
                     
                     with st.spinner("Running simulation..."):
 
-                        range_wr_player_run_graph, range_wr_game_distribution_graph = simulation_1(
+                        range_wr_player_run_graph, range_wr_game_distribution_graph = simulation_series_of_win_rates(
                             simulation1_number_of_attempts_per_win_rate,
                             starting_rank,
                             target_stars,
@@ -181,7 +181,7 @@ def main():
                     st.write("Simulation 2: Single Win Rate Analysis")
 
                     with st.spinner("Running Simulation..."):
-                        single_wr_player_run_graph, single_wr_game_distribution_graph, single_wr_games_histogram, single_wr_winrate_histogram, average_games_to_target = simulation_2(
+                        single_wr_player_run_graph, single_wr_game_distribution_graph, single_wr_games_histogram, single_wr_winrate_histogram, average_games_to_target = simulation_single_win_rate_analysis(
                             simulation2_number_of_attempts,
                             expected_season_end_win_rate,
                             starting_rank,
