@@ -82,6 +82,21 @@ def Determine_Result (wr, stars, star_raising, star_raising_cap, max_star_raisin
 
     return stars, star_raising, star_protection, games_won
 
+def Determine_Mythic_Result (mythic_trial_matches, wr, games_won, mythic_wins, mythic_extra_stars, entered_mythic_once, stars):
+    mythic_trial_matches += 1
+                
+    if (rnd.random() < wr):
+        games_won += 1
+        mythic_wins += 1
+        if mythic_extra_stars < 5:
+            mythic_extra_stars += 1
+
+    if mythic_trial_matches == 10:
+        entered_mythic_once = True
+        stars += mythic_wins + mythic_extra_stars
+
+    return mythic_trial_matches, games_won, mythic_wins, mythic_extra_stars, entered_mythic_once, stars
+
 def rational_model (x, a, b, c):
     return a / (x - b) + c
 
@@ -142,9 +157,18 @@ def determine_stars (rank, division, stars):
         
     return stars_from_rank + stars_from_division + stars
 
+def graph_theme (graph_colour):
+    plt.rcParams['text.color'] = graph_colour         # For text (titles, labels, etc.)
+    plt.rcParams['axes.labelcolor'] = graph_colour    # For axis labels
+    plt.rcParams['xtick.color'] = graph_colour        # For x-axis ticks
+    plt.rcParams['ytick.color'] = graph_colour        # For y-axis ticks
+    plt.rcParams['axes.edgecolor'] = graph_colour     # For axis borders
+    plt.rcParams['figure.facecolor'] = 'none'   # Transparent figure background
+    plt.rcParams['axes.facecolor'] = 'none'     # Transparent axes background
+
 ###################################################################################################################################################################
 
-def simulation_1 (
+def simulation_series_of_win_rates (
         simulation1_number_of_attempts_per_win_rate,
         starting_rank,
         target_stars,
@@ -165,13 +189,8 @@ def simulation_1 (
         figure_size_x,
         figure_size_y
 ):
-    plt.rcParams['text.color'] = graph_colour         # For text (titles, labels, etc.)
-    plt.rcParams['axes.labelcolor'] = graph_colour    # For axis labels
-    plt.rcParams['xtick.color'] = graph_colour        # For x-axis ticks
-    plt.rcParams['ytick.color'] = graph_colour        # For y-axis ticks
-    plt.rcParams['axes.edgecolor'] = graph_colour     # For axis borders
-    plt.rcParams['figure.facecolor'] = 'none'   # Transparent figure background
-    plt.rcParams['axes.facecolor'] = 'none'     # Transparent axes background
+    
+    graph_theme(graph_colour)
 
     # This simulation assumes you actually are able to play at the level that you are simulating.
 
@@ -181,13 +200,13 @@ def simulation_1 (
 
     win_rate = np.linspace(min_win_rate,max_win_rate, how_many_different_winrates)
 
-    simulation_1_player_runs_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
-    simulation_1_player_runs_graph.patch.set_alpha(0.0)
-    ax1 = simulation_1_player_runs_graph.add_subplot(111)
+    range_wr_player_run_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
+    range_wr_player_run_graph.patch.set_alpha(0.0)
+    ax1 = range_wr_player_run_graph.add_subplot(111)
 
-    simulation_1_game_distribution_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
-    simulation_1_game_distribution_graph.patch.set_alpha(0.0)
-    ax2 = simulation_1_game_distribution_graph.add_subplot(111)
+    range_wr_game_distribution_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
+    range_wr_game_distribution_graph.patch.set_alpha(0.0)
+    ax2 = range_wr_game_distribution_graph.add_subplot(111)
 
     for winrate in win_rate:
 
@@ -220,17 +239,7 @@ def simulation_1 (
                 games += 1
 
                 if stars >= 0 and entered_mythic_once == False:
-                    mythic_trial_matches += 1
-                    
-                    if (rnd.random() < wr):
-                        games_won += 1
-                        mythic_wins += 1
-                        if mythic_extra_stars < 5:
-                            mythic_extra_stars += 1
-
-                    if mythic_trial_matches == 10:
-                        entered_mythic_once = True
-                        stars += mythic_wins + mythic_extra_stars
+                    mythic_trial_matches, games_won, mythic_wins, mythic_extra_stars, entered_mythic_once, stars = Determine_Mythic_Result(mythic_trial_matches, wr, games_won, mythic_wins, mythic_extra_stars, entered_mythic_once, stars)
 
                 else:
                     stars, star_raising, star_protection, games_won = Determine_Result (wr, stars, star_raising, star_raising_cap, max_star_raising_per_game, star_protection, star_protection_cap, max_star_protection_per_game, games_won)
@@ -256,7 +265,7 @@ def simulation_1 (
 
     if show_player_Graph == True:
         ax1.grid(True)
-        ax1.set_title(f"Number of Games Required to Return to {target_stars} stars")
+        ax1.set_title(f"Number of Games Required to reach {target_stars} stars")
         ax1.axhline(target_stars, color='r', label=f'{target_stars} stars threshold')
         ax1.set_xlabel("Number of games")
         ax1.set_ylabel("Number of stars")
@@ -289,10 +298,11 @@ def simulation_1 (
     else:
         st.write(f"Apologies, but for the chosen range between {min_win_rate}% and {max_win_rate}%, none of the attempts have managed to reach {target_stars} stars within {max_games_to_simulate} games")
 
-    return simulation_1_player_runs_graph, simulation_1_game_distribution_graph
+    return range_wr_player_run_graph, range_wr_game_distribution_graph
+
 ###################################################################################################################################################################
 
-def simulation_2 (
+def simulation_single_win_rate_analysis (
         simulation2_number_of_attempts,
         expected_season_end_win_rate,
         starting_rank,
@@ -311,29 +321,24 @@ def simulation_2 (
         figure_size_x,
         figure_size_y
 ):
-    plt.rcParams['text.color'] = graph_colour         # For text (titles, labels, etc.)
-    plt.rcParams['axes.labelcolor'] = graph_colour    # For axis labels
-    plt.rcParams['xtick.color'] = graph_colour        # For x-axis ticks
-    plt.rcParams['ytick.color'] = graph_colour        # For y-axis ticks
-    plt.rcParams['axes.edgecolor'] = graph_colour     # For axis borders
-    plt.rcParams['figure.facecolor'] = 'none'   # Transparent figure background
-    plt.rcParams['axes.facecolor'] = 'none'     # Transparent axes background
+    
+    graph_theme(graph_colour)
 
-    simulation_2_player_runs_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
-    simulation_2_player_runs_graph.patch.set_alpha(0.0)
-    ax1 = simulation_2_player_runs_graph.add_subplot(111)
+    single_wr_player_run_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
+    single_wr_player_run_graph.patch.set_alpha(0.0)
+    ax1 = single_wr_player_run_graph.add_subplot(111)
 
-    simulation_2_game_distribution_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
-    simulation_2_game_distribution_graph.patch.set_alpha(0.0)
-    ax2 = simulation_2_game_distribution_graph.add_subplot(111)
+    single_wr_game_distribution_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
+    single_wr_game_distribution_graph.patch.set_alpha(0.0)
+    ax2 = single_wr_game_distribution_graph.add_subplot(111)
 
-    simulation_2_games_histogram = plt.figure(figsize=(figure_size_x, figure_size_y))
-    simulation_2_games_histogram.patch.set_alpha(0.0)
-    ax3 = simulation_2_games_histogram.add_subplot(111)
+    single_wr_games_histogram = plt.figure(figsize=(figure_size_x, figure_size_y))
+    single_wr_games_histogram.patch.set_alpha(0.0)
+    ax3 = single_wr_games_histogram.add_subplot(111)
 
-    simulation_2_win_rate_histogram = plt.figure(figsize=(figure_size_x, figure_size_y))
-    simulation_2_win_rate_histogram.patch.set_alpha(0.0)
-    ax4 = simulation_2_win_rate_histogram.add_subplot(111)
+    single_wr_winrate_histogram = plt.figure(figsize=(figure_size_x, figure_size_y))
+    single_wr_winrate_histogram.patch.set_alpha(0.0)
+    ax4 = single_wr_winrate_histogram.add_subplot(111)
 
     # This simulation assumes you actually are able to play at the level that you are simulating.
 
@@ -368,17 +373,7 @@ def simulation_2 (
             games += 1
 
             if stars >= 0 and entered_mythic_once == False:
-                mythic_trial_matches += 1
-                
-                if (rnd.random() < wr):
-                    games_won += 1
-                    mythic_wins += 1
-                    if mythic_extra_stars < 5:
-                        mythic_extra_stars += 1
-
-                if mythic_trial_matches == 10:
-                    entered_mythic_once = True
-                    stars += mythic_wins + mythic_extra_stars
+                mythic_trial_matches, games_won, mythic_wins, mythic_extra_stars, entered_mythic_once, stars = Determine_Mythic_Result(mythic_trial_matches, wr, games_won, mythic_wins, mythic_extra_stars, entered_mythic_once, stars)
 
             else:
                 stars, star_raising, star_protection, games_won = Determine_Result (wr, stars, star_raising, star_raising_cap, max_star_raising_per_game, star_protection, star_protection_cap, max_star_protection_per_game, games_won)
@@ -395,7 +390,7 @@ def simulation_2 (
 
     if show_player_Graph == True:
         ax1.grid(True)
-        ax1.set_title(f"Number of Games Required to Return to {target_stars} stars")
+        ax1.set_title(f"Number of Games Required to reach to {target_stars} stars")
         ax1.axhline(target_stars, color='r', label=f'{target_stars} stars threshold')
         ax1.set_xlabel("Number of games")
         ax1.set_ylabel("Number of stars")   
@@ -438,6 +433,139 @@ def simulation_2 (
         ax4.set_ylabel('Frequency')
         ax4.set_title(f"This is the distribution of win rate after you reach {target_stars} stars playing as a {expected_season_end_win_rate:.1f}% wr player")
 
-    return simulation_2_player_runs_graph, simulation_2_game_distribution_graph, simulation_2_games_histogram, simulation_2_win_rate_histogram, average_games_to_target
+    return single_wr_player_run_graph, single_wr_game_distribution_graph, single_wr_games_histogram, single_wr_winrate_histogram, average_games_to_target
 
 ###################################################################################################################################################################
+
+def simulation_destination_from_number_of_games (
+        simulation2_number_of_attempts,
+        expected_season_end_win_rate,
+        starting_rank,
+        target_stars,
+        star_raising_cap,
+        max_star_raising_per_game,
+        max_star_protection_per_game,
+        star_protection_cap,
+        show_player_Graph,
+        max_games_to_simulate,
+        histogram_bin,
+        starting_param_a,
+        starting_param_b,
+        starting_param_c,
+        graph_colour,
+        figure_size_x,
+        figure_size_y
+):
+    
+    graph_theme(graph_colour)
+
+    single_wr_player_run_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
+    single_wr_player_run_graph.patch.set_alpha(0.0)
+    ax1 = single_wr_player_run_graph.add_subplot(111)
+
+    single_wr_game_distribution_graph = plt.figure(figsize=(figure_size_x, figure_size_y))
+    single_wr_game_distribution_graph.patch.set_alpha(0.0)
+    ax2 = single_wr_game_distribution_graph.add_subplot(111)
+
+    single_wr_games_histogram = plt.figure(figsize=(figure_size_x, figure_size_y))
+    single_wr_games_histogram.patch.set_alpha(0.0)
+    ax3 = single_wr_games_histogram.add_subplot(111)
+
+    single_wr_winrate_histogram = plt.figure(figsize=(figure_size_x, figure_size_y))
+    single_wr_winrate_histogram.patch.set_alpha(0.0)
+    ax4 = single_wr_winrate_histogram.add_subplot(111)
+
+    # This simulation assumes you actually are able to play at the level that you are simulating.
+
+    actual_win_rate_list = []
+    games_to_target = [] # list of games to target stars, y value of the final plot
+
+    for iterator in range (0, simulation2_number_of_attempts):
+
+        wr = expected_season_end_win_rate / 100
+
+        plotting_values = []
+
+        # Player Variables
+        games = 0
+        stars = starting_rank
+        star_raising = 0  
+        star_protection = 0
+        games_won = 0
+        over_number_of_interested_games = False
+        
+        # Mythic Variables
+        entered_mythic_once = False # Checks if you need to go through trial
+        mythic_trial_matches = 0 # These are the 10 matches that you get
+        mythic_wins = 0 
+        mythic_extra_stars = 0 # You can only get up to 5 extra start from these
+
+        while (stars < target_stars and over_number_of_interested_games == False):
+            
+            if (games >= max_games_to_simulate):
+                over_number_of_interested_games = True
+
+            games += 1
+
+            if stars >= 0 and entered_mythic_once == False:
+                mythic_trial_matches, games_won, mythic_wins, mythic_extra_stars, entered_mythic_once, stars = Determine_Mythic_Result(mythic_trial_matches, wr, games_won, mythic_wins, mythic_extra_stars, entered_mythic_once, stars)
+
+            else:
+                stars, star_raising, star_protection, games_won = Determine_Result (wr, stars, star_raising, star_raising_cap, max_star_raising_per_game, star_protection, star_protection_cap, max_star_protection_per_game, games_won)
+
+            plotting_values.append([games, stars])
+        
+        if (not(over_number_of_interested_games)):
+            actual_win_rate_list.append(games_won/games*100)
+            games_to_target.append(games)
+
+        x = [item[0] for item in plotting_values]
+        y = [item[1] for item in plotting_values]
+        ax1.plot(x, y,color=graph_colour)
+
+    if show_player_Graph == True:
+        ax1.grid(True)
+        ax1.set_title(f"Number of Games Required to reach to {target_stars} stars")
+        ax1.axhline(target_stars, color='r', label=f'{target_stars} stars threshold')
+        ax1.set_xlabel("Number of games")
+        ax1.set_ylabel("Number of stars")   
+
+    average_games_to_target = 100000000
+
+    if(len(games_to_target) != 0):
+
+        # Chat GPT Generated 
+        ax2.scatter(actual_win_rate_list, games_to_target, label='Actual data per Adjusted Win Rate')
+
+        # Your data
+        x_data = np.array(actual_win_rate_list)
+        y_data = np.array(games_to_target)
+
+        # Fit the model
+        params, _ = curve_fit(rational_model, x_data, y_data, p0=[starting_param_a, starting_param_b, starting_param_c], maxfev=10000)  # p0 is the initial guess
+        average_games_to_target = rational_model(expected_season_end_win_rate, *params)
+
+        # Generate smooth curve
+        x_fit = np.linspace(min(x_data), max(x_data), 500)
+        y_fit = rational_model(x_fit, *params)
+        ax2.plot(x_fit, y_fit, color='green', label=f'Best Rational Fit: {params[0]:.2f}/(x-{params[1]:.2f})+{params[2]:.2f}')
+
+        ax2.set_title(f"Win Rate vs Number of Games Needed for {target_stars} stars")
+        ax2.set_xlabel("Win Rate (%)")
+        ax2.set_ylabel("Number of games")
+        ax2.grid(True)
+        ax2.legend()
+
+        # Histogram for expected win rate 
+
+        ax3.hist(games_to_target, bins= 1 if len(games_to_target) < histogram_bin else histogram_bin)
+        ax3.set_xlabel(f'Number of games to {target_stars} stars')
+        ax3.set_ylabel('Frequency')
+        ax3.set_title(f"You need an average of {average_games_to_target:.0f} games to reach {target_stars} stars with {expected_season_end_win_rate:.1f}% win rate starting from {starting_rank} stars")
+
+        ax4.hist(actual_win_rate_list, bins= 1 if len(actual_win_rate_list) < histogram_bin else histogram_bin)
+        ax4.set_xlabel(f'Win Rate after reaching {target_stars} stars / %')
+        ax4.set_ylabel('Frequency')
+        ax4.set_title(f"This is the distribution of win rate after you reach {target_stars} stars playing as a {expected_season_end_win_rate:.1f}% wr player")
+
+    return single_wr_player_run_graph, single_wr_game_distribution_graph, single_wr_games_histogram, single_wr_winrate_histogram, average_games_to_target
